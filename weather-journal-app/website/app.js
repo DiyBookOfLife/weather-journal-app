@@ -1,24 +1,7 @@
-// Global Variables
-// Base URL for OpenWeatherMap API
-// Personal API Key (api key format was concluded under 'format' section, the format isn't listed but conclusion based on the URL)
+
 const getWeatherData = async (zip) => {
     try {
         const response = await fetch(`/weather?zip=${zip}`); // Call backend route
-        const data = await response.json(); // Convert response to JSON
-        return data; // Return data to be used elsewhere
-    } catch (error) {
-        console.error("Error fetching weather data:", error);
-    }
-};
-
-
-// Function to fetch weather data from OpenWeatherMap API
-const getWeatherData = async (zip) => {
-    // Construct full API URL
-    const url = baseURL + zip + apiKey;
-    console.log("Fetching URL:", url);
-    try {
-        const response = await fetch(url); // Fetch data from API
         const data = await response.json(); // Convert response to JSON
         return data; // Return data to be used elsewhere
     } catch (error) {
@@ -58,31 +41,49 @@ const updateUI = async () => {
 
 // Event listener for the 'Generate' button
 document.getElementById("generate").addEventListener("click", async () => {
-    const zip = document.getElementById("zip").value; // Get zip input
-    const feelings = document.getElementById("feelings").value; // Get feelings input
+    // Get ZIP code and feelings input from the form
+    const zip = document.getElementById("zip").value; // Input field for ZIP code
+    const feelings = document.getElementById("feelings").value; // Input field for feelings
     
+    // Debugging: Log ZIP and feelings values to check their inputs
+    console.log("ZIP entered:", zip); // Check if ZIP code is being retrieved correctly
+    console.log("Feelings entered:", feelings); // Check if feelings input is being retrieved correctly
+    
+    // Validate ZIP code input: Show alert if ZIP code is missing
     if (!zip) {
-        alert("Please enter a zip code");
-        return;
+        alert("Please enter a zip code"); // Notify the user about missing ZIP code
+        return; // Stop execution if ZIP code is empty
     }
+
+    // Fetch weather data using the provided ZIP code
+    const weatherData = await getWeatherData(zip); // Call function to fetch weather data
     
-    const weatherData = await getWeatherData(zip); // Fetch weather data
-    
+    // Debugging: Log the response from the getWeatherData function
+    console.log("Weather data received:", weatherData); // Check the data returned from the backend route
+
+    // Check if weather data is valid and contains the 'main' property
     if (weatherData && weatherData.main) {
-        // Get current date
-        let date = new Date();
-        let newDate = `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
-        
-        // Prepare data object - consolidate the relevant info 
+        // Get the current date in MM/DD/YYYY format
+        const date = new Date();
+        const newDate = `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
+
+        // Consolidate the weather and user data into a single object
         const data = {
-            temperature: weatherData.main.temp,
-            date: newDate,
-            userResponse: feelings,
+            temperature: weatherData.main.temp, // Temperature from API
+            date: newDate, // Current date
+            userResponse: feelings, // Feelings input from the user
         };
-        
-        await postData("/addData", data); // Send data to server
-        await updateUI(); // Update UI with new data
+
+        // Debugging: Log the data object being sent to the server
+        console.log("Data sent to the server:", data);
+
+        // Post the consolidated data to the server
+        await postData("/addData", data);
+
+        // Update the UI dynamically with the latest data from the server
+        await updateUI();
     } else {
-        alert("Invalid zip code. Please try again.");
+        // Notify the user about invalid ZIP code
+        alert("Invalid ZIP code. Please try again."); // Show alert for invalid ZIP
     }
 });

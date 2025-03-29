@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "## To get started, I modified the server.js file and the website/app.js file. The index.html file provides the necessary element references for the app, and once the functionality is in place, the style.css (provided by Udacity) is used to customize the look and feel of the application.",
   "main": "server.js",
+  "type": "module", 
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js"
@@ -10,10 +11,11 @@
   "keywords": [],
   "author": "Toni Thomas",
   "license": "ISC",
-  "type": "commonjs",
   "dependencies": {
     "body-parser": "^1.20.3",
     "cors": "^2.8.5",
-    "express": "^4.21.2"
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "node-fetch": "^3.3.2"
   }
 }
