@@ -27,10 +27,14 @@ While the HTML and CSS files were provided by Udacity, all backend logic and app
 
 ### Steps:
 1. Clone the repository:
-   ```bash
-   git clone https://github.com/DiyBookOfLife/weather-Journal-App.git
-2. Install dependencies: npm install
-3. Start server: node server.js
+    ```bash
+   git clone https://github.com/DiyBookOfLife/weather-journal-app.git
+2. Install dependencies: 
+    ```bash
+    npm install
+3. Start server: 
+    ```bash
+    node server.js
 4. Open http://localhost:3000 in your browser to access the app.
 
 ## How It Works
