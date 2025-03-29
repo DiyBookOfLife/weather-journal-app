@@ -1,8 +1,16 @@
 // Global Variables
 // Base URL for OpenWeatherMap API
-const baseURL = "https://api.openweathermap.org/data/2.5/weather?zip=";
 // Personal API Key (api key format was concluded under 'format' section, the format isn't listed but conclusion based on the URL)
-const apiKey = "&appid=b737677c7f686b5f2956cfd3803cadf8&units=imperial";
+const getWeatherData = async (zip) => {
+    try {
+        const response = await fetch(`/weather?zip=${zip}`); // Call backend route
+        const data = await response.json(); // Convert response to JSON
+        return data; // Return data to be used elsewhere
+    } catch (error) {
+        console.error("Error fetching weather data:", error);
+    }
+};
+
 
 // Function to fetch weather data from OpenWeatherMap API
 const getWeatherData = async (zip) => {
