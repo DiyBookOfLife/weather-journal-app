@@ -1,0 +1,161 @@
+/* Body Styling */
+body {
+    background: #fffff8;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* App Container Styling */
+#app {
+    display: grid;
+    grid-template-columns: 1fr; /* Single column layout */
+    grid-template-rows: auto;
+    gap: 1em;
+    max-width: 1000px;
+    width: 100%;
+    background: #124769;
+    color: #f0d43a;
+    padding: 1em;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Entry Holder Styling */
+.entry {
+    background: rgba(59, 74, 107, 0.6);
+    padding: 20px;
+    border-radius: 8px;
+}
+
+/* Headline */
+.headline {
+    font-size: 30px;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* Label Styling */
+label {
+    display: block;
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+/* Input Styling */
+input {
+    display: block;
+    width: 100%;
+    padding: 15px;
+    background: #22b2da;
+    color: #f0d43a;
+    font-size: 18px;
+    border: none;
+    border-radius: 5px;
+    box-sizing: border-box;
+    margin-bottom: 20px;
+    font-family: 'Oswald', sans-serif;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* Input Focus Styling */
+input:focus {
+    outline: none;
+    background: #f0d43a;
+    color: #124769;
+}
+
+/* Button Styling */
+button {
+    width: 100%;
+    padding: 20px;
+    background: #3b4a6b;
+    color: #f0d43a;
+    font-size: 22px;
+    border: none;
+    border-radius: 8px;
+    font-family: 'Oswald', sans-serif;
+    box-shadow: 2px 4px 5px #444;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+/* Button Hover Styling */
+button:hover {
+    background: #2a384f;
+}
+
+/* Heading Styles */
+h1 {
+    font-size: 36px;
+    text-align: center;
+    color: #f0d43a;
+}
+
+/* Textarea Styling */
+textarea {
+    background: #22b2da;
+    color: #f0d43a;
+    font-size: 18px;
+    font-family: 'Oswald', sans-serif;
+    padding: 15px;
+    border-radius: 8px;
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 20px;
+}
+
+/* Placeholder Text Styling */
+::placeholder {
+    color: #f0d43a;
+    font-family: 'Oswald', sans-serif;
+}
+
+/* Focused Input, Select, Textarea & Button Reset */
+input:focus,
+select:focus,
+textarea:focus,
+button:focus {
+    outline: none;
+}
+
+/* Media Queries for Responsiveness */
+@media (max-width: 768px) {
+    #app {
+        grid-template-columns: 1fr;
+        padding: 15px;
+    }
+
+    input {
+        width: 100%;
+        padding: 10px;
+    }
+
+    button {
+        padding: 15px;
+    }
+
+    h1 {
+        font-size: 28px;
+    }
+}
+
+@media (max-width: 480px) {
+    h1 {
+        font-size: 24px;
+    }
+
+    input {
+        width: 100%;
+        padding: 12px;
+    }
+
+    button {
+        padding: 18px;
+        font-size: 20px;
+    }
+}
