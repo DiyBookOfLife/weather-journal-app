@@ -1,7 +1,7 @@
 {
   "name": "weather-journal-app",
   "version": "1.0.0",
-  "description": "## To get started, I modified the server.js file and the website/app.js file. The index.html file provides the necessary element references for the app, and once the functionality is in place, the style.css (provided by Udacity) is used to customize the look and feel of the application.",
+  "description": "## To get started, I modified the server.js file and the docs/app.js file. The index.html file provides the necessary element references for the app, and once the functionality is in place, the style.css (provided by Udacity) is used to customize the look and feel of the application.",
   "main": "server.js",
   "type": "module", 
   "scripts": {
