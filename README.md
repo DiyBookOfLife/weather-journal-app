@@ -1,48 +1,89 @@
 # Weather-Journal App Project
 
 ## Overview
-This Weather-Journal App showcases my ability to build an asynchronous web application that interacts with an external API (OpenWeather API) and user-generated data to dynamically update the user interface. It demonstrates my skills in:
-- **Web APIs Integration**
-- **Dynamic UI Updates**
-- **JavaScript Asynchronous Programming**
-- **Node.js Backend Development**
 
-While the HTML and CSS files were provided by Udacity, all backend logic and app functionality—including `server.js`, `website/app.js`, and additional JavaScript logic—are fully custom-built by me.
+The **Weather-Journal App** is a full-stack project that demonstrates my ability to build an asynchronous web application. It integrates with the **OpenWeather API** and allows users to create journal entries tied to real-time weather data.
+
+This project highlights my skills in:
+
+- **API Integration**
+- **Dynamic UI Updates**
+- **Asynchronous JavaScript**
+- **Node.js + Express Backend Development**
+- **Deploying Full-Stack Apps (GitHub Pages + Render)**
+
+The base HTML and CSS were provided by Udacity, but all backend logic, API integration, and functionality—including `server.js` and `app.js`—were fully developed by me.
+
+---
 
 ## Features
-- Fetch real-time weather data from OpenWeather API based on user input.
-- Store and retrieve user journal entries alongside weather data.
-- Dynamically update the UI with both API data and user input.
-- Utilize asynchronous JavaScript for smooth interactions.
+
+- Fetch real-time weather data from the **OpenWeather API** based on user input.
+- Store and retrieve journal entries linked with weather data.
+- Dynamically update the UI with both API results and user input.
+- Utilize **async/await** for smooth and efficient asynchronous interactions.
+- Fully deployed: frontend on GitHub Pages, backend API on Render.
+
+---
+
+## Live Demo
+
+- **Frontend (GitHub Pages):** [Weather Journal App](https://diybookoflife.github.io/weather-journal-app/)
+- **Backend (Render API):** [Weather Journal API](https://weather-journal-api.onrender.com)
+
+---
 
 ## Technologies Used
+
 - **Frontend**: HTML, CSS, JavaScript
 - **Backend**: Node.js, Express
 - **API**: OpenWeather API
-- **Other Tools**: Postman, GitHub
+- **Other Tools**: Postman, GitHub, Render
 
-## Installation & Usage
-### Prerequisites:
-- [Node.js](https://nodejs.org/) installed on your machine.
+---
 
-### Steps:
+## Installation & Usage (Local Setup)
+
+### Prerequisites
+
+- [Node.js](https://nodejs.org/) installed on your machine
+- OpenWeather API Key (store in `.env` file)
+
+### Steps
+
 1. Clone the repository:
-    ```bash
+   ```bash
    git clone https://github.com/DiyBookOfLife/weather-journal-app.git
-2. Install dependencies: 
-    ```bash
-    npm install
-3. Start server: 
-    ```bash
-    node server.js
-4. Open http://localhost:3000 in your browser to access the app.
+   ```
+2. Install dependencies:
+
+   ```bash
+   npm install
+   ```
+
+3. Create a `.env` file in the project root and add your API key:
+   WEATHER_API_KEY=your_openweather_api_key
+
+4. Start the server:
+   ```bash
+   node server.js
+   ```
+5. Open http://localhost:8000 in your browser to start the app.
+
+---
 
 ## How It Works
-1. User enters a zip code and journal entry.
-2. The app fetches weather data from the OpenWeather API.
-3. Weather data and journal entry are stored in the server and displayed dynamically on the frontend.
+
+1. User enters a **zip code** and a **journal entry**.
+2. The app fetches weather data from the **OpenWeather API** (via backend).
+3. Weather data + journal entry are stored in the Express server.
+4. The frontend dynamically updates to display the most recent entry.
+
+---
 
 ## Contact
-For questions or collaboration opportunities, feel free to reach out:
+
+For questions or collaboration opportunities, feel free to connect:
+
 - **GitHub**: [DiyBookOfLife](https://github.com/DiyBookOfLife)
-- **LinkedIn**: [My LinkedIn Profile](https://www.linkedin.com/in/tonithomas2025)
+- **LinkedIn**: [Toni Thomas](https://www.linkedin.com/in/tonithomas2025)
