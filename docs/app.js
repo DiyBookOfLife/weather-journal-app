@@ -1,89 +1,132 @@
+// -----------------------------
+// API base (dev vs prod)
+// -----------------------------
+const API =
+  location.hostname === "localhost"
+    ? "http://localhost:8000"
+    : "https://weather-journal-api.onrender.com";
 
-const getWeatherData = async (zip) => {
-    try {
-        const response = await fetch(`/weather?zip=${zip}`); // Call backend route
-        const data = await response.json(); // Convert response to JSON
-        return data; // Return data to be used elsewhere
-    } catch (error) {
-        console.error("Error fetching weather data:", error);
+function notify(msg) {
+  alert(msg);
+}
+// -----------------------------
+// Backend calls
+// -----------------------------
+async function getWeatherData(zip) {
+  try {
+    const res = await fetch(`${API}/weather?zip=${encodeURIComponent(zip)}`, {
+      cache: "no-store",
+    });
+
+    if (!res.ok) {
+      // Server returned an HTTP error (e.g., 400/404)
+      const text = await res.text().catch(() => "");
+      throw new Error(`Weather request failed (${res.status}): ${text}`);
     }
-};
+    return await res.json();
+  } catch (err) {
+    console.error("getWeatherData error:", err);
+    throw err;
+  }
+}
 
-// Function to send data to the server
-const postData = async (url = "", data = {}) => {
-    try {
-        const response = await fetch(url, {
-            method: "POST",
-            credentials: "same-origin",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(data), // Convert data to JSON
-        });
-        return await response.json(); // Return server response
-    } catch (error) {
-        console.error("Error posting data:", error);
+async function postData(url = "", data = {}) {
+  try {
+    const res = await fetch(`${API}${url}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+
+    if (!res.ok) {
+      const text = await res.text().catch(() => "");
+      throw new Error(`POST ${url} failed (${res.status}): ${text}`);
     }
-};
+    return await res.json();
+  } catch (err) {
+    console.error("postData error:", err);
+    throw err;
+  }
+}
 
-// Function to update the UI dynamically
-const updateUI = async () => {
-    try {
-        const response = await fetch("/all"); // Fetch stored data from server
-        const data = await response.json(); // Convert response to JSON
-        
-        // Update DOM elements with new data
-        document.getElementById("date").innerHTML = `Date: ${data.date}`;
-        document.getElementById("temp").innerHTML = `Temperature: ${data.temperature}°C`;
-        document.getElementById("content").innerHTML = `Feelings: ${data.userResponse}`;
-    } catch (error) {
-        console.error("Error updating UI:", error);
+async function fetchLatest() {
+  try {
+    const res = await fetch(`${API}/all`, { cache: "no-store" });
+    if (!res.ok) {
+      const text = await res.text().catch(() => "");
+      throw new Error(`GET /all failed (${res.status}): ${text}`);
     }
-};
+    return await res.json();
+  } catch (err) {
+    console.error("fetchLatest error:", err);
+    throw err;
+  }
+}
 
-// Event listener for the 'Generate' button
+// -----------------------------
+// UI update
+// -----------------------------
+async function updateUI() {
+  try {
+    const data = await fetchLatest();
+
+    // Guard if the object is empty
+    const date = data?.date ?? "";
+    const temperature = data?.temperature ?? "";
+    const userResponse = data?.userResponse ?? "";
+
+    document.getElementById("date").textContent = date ? `Date: ${date}` : "";
+    document.getElementById("temp").textContent =
+      temperature !== "" ? `Temperature: ${temperature}°C` : "";
+    document.getElementById("content").textContent = userResponse
+      ? `Feelings: ${userResponse}`
+      : "";
+  } catch (err) {
+    // Subtle failure fallback — don’t block user
+    console.error("updateUI error:", err);
+  }
+}
+
+// -----------------------------
+// Generate click handler
+// -----------------------------
 document.getElementById("generate").addEventListener("click", async () => {
-    // Get ZIP code and feelings input from the form
-    const zip = document.getElementById("zip").value; // Input field for ZIP code
-    const feelings = document.getElementById("feelings").value; // Input field for feelings
-    
-    // Debugging: Log ZIP and feelings values to check their inputs
-    console.log("ZIP entered:", zip); // Check if ZIP code is being retrieved correctly
-    console.log("Feelings entered:", feelings); // Check if feelings input is being retrieved correctly
-    
-    // Validate ZIP code input: Show alert if ZIP code is missing
-    if (!zip) {
-        alert("Please enter a zip code"); // Notify the user about missing ZIP code
-        return; // Stop execution if ZIP code is empty
+  const zip = document.getElementById("zip").value.trim();
+  const feelings = document.getElementById("feelings").value.trim();
+
+  // Basic ZIP validation (US 5-digit)
+  if (!/^\d{5}$/.test(zip)) {
+    notify("Please enter a valid 5-digit US ZIP code.");
+    return;
+  }
+
+  try {
+    // 1) Get weather
+    const weather = await getWeatherData(zip);
+
+    if (!weather || !weather.main) {
+      notify("Invalid ZIP code or weather not available for this area.");
+      return;
     }
 
-    // Fetch weather data using the provided ZIP code
-    const weatherData = await getWeatherData(zip); // Call function to fetch weather data
-    
-    // Debugging: Log the response from the getWeatherData function
-    console.log("Weather data received:", weatherData); // Check the data returned from the backend route
+    // 2) Build entry payload
+    const now = new Date();
+    const entry = {
+      temperature: weather.main.temp,
+      date: `${now.getMonth() + 1}/${now.getDate()}/${now.getFullYear()}`,
+      userResponse: feelings,
+    };
 
-    // Check if weather data is valid and contains the 'main' property
-    if (weatherData && weatherData.main) {
-        // Get the current date in MM/DD/YYYY format
-        const date = new Date();
-        const newDate = `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
+    // 3) Save to backend
+    await postData("/addData", entry);
 
-        // Consolidate the weather and user data into a single object
-        const data = {
-            temperature: weatherData.main.temp, // Temperature from API
-            date: newDate, // Current date
-            userResponse: feelings, // Feelings input from the user
-        };
-
-        // Debugging: Log the data object being sent to the server
-        console.log("Data sent to the server:", data);
-
-        // Post the consolidated data to the server
-        await postData("/addData", data);
-
-        // Update the UI dynamically with the latest data from the server
-        await updateUI();
-    } else {
-        // Notify the user about invalid ZIP code
-        alert("Invalid ZIP code. Please try again."); // Show alert for invalid ZIP
-    }
+    // 4) Refresh UI
+    await updateUI();
+  } catch (err) {
+    notify(
+      "The server might be waking up or unavailable. Please wait a few seconds and try again."
+    );
+  }
 });
+
+updateUI();
