@@ -1,57 +1,69 @@
+// server.js
 import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
-import fetch from "node-fetch"; // Use ES Module syntax for node-fetch
+import fetch from "node-fetch";
 import dotenv from "dotenv";
 
 dotenv.config();
 
-let projectData = {}; // Declare projectData
-
 const app = express();
+const PORT = process.env.PORT || 8000;
 
-/* Middleware */
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
+// middleware
 app.use(cors());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+
+// serve the front-end from /docs (index.html, app(s).js, style.css)
 app.use(express.static("docs"));
 
-// Setup Server
-const port = 8000;
-app.listen(port, () => {
-    console.log(`Server running on localhost:${port}`);
-});
+// in-memory store for your journal data
+let projectData = {};
 
-// Routes
-app.get("/all", (req, res) => {
-    res.send(projectData);
-});
-
+// POST /addData  (front-end posts here)
 app.post("/addData", (req, res) => {
-    projectData = req.body;
-    res.send({ message: "Data received successfully", data: projectData });
+  projectData = req.body || {};
+  res.json({ ok: true, data: projectData });
 });
 
+// GET /all  (front-end reads latest entry here)
+app.get("/all", (_req, res) => {
+  res.json(projectData);
+});
+
+// GET /weather?zip=xxxxx  (server calls OpenWeather with your API key)
 app.get("/weather", async (req, res) => {
-    const zip = req.query.zip;
+  try {
     const apiKey = process.env.WEATHER_API_KEY;
-    const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?zip=${zip}&appid=${apiKey}&units=imperial`;
+    if (!apiKey)
+      return res.status(500).json({ error: "Missing WEATHER_API_KEY" });
 
-    console.log("Fetching weather data from URL:", weatherUrl);
+    const { zip } = req.query;
+    if (!zip)
+      return res.status(400).json({ error: "zip query param is required" });
 
-    try {
-        const response = await fetch(weatherUrl); // Fetch data from OpenWeather API
-        const data = await response.json();
+    const url = `https://api.openweathermap.org/data/2.5/weather?zip=${encodeURIComponent(
+      zip
+    )}&appid=${apiKey}&units=imperial`;
 
-        console.log("Weather data received:", data);
+    const resp = await fetch(url);
+    const data = await resp.json();
 
-        if (data.cod !== 200) {
-            return res.status(400).send({ error: data.message });
-        }
-
-        res.send(data);
-    } catch (error) {
-        console.error("Error fetching weather data:", error);
-        res.status(500).send({ error: "Internal server error" });
+    if (!resp.ok || (data.cod && Number(data.cod) !== 200)) {
+      return res
+        .status(400)
+        .json({ error: data.message || "OpenWeather error" });
     }
+
+    res.json(data);
+  } catch (err) {
+    console.error("Weather route error:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// start server
+app.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
 });
